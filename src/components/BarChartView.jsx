@@ -1,0 +1,18 @@
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+
+export default function BarChartView({ title, data, xKey, yKey }) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+      <h3 className="text-sm font-medium text-slate-600 mb-4">{title}</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <XAxis dataKey={xKey} stroke="#64748b" fontSize={12} />
+          <YAxis stroke="#64748b" fontSize={12} />
+          <Tooltip />
+          <Bar dataKey={yKey} fill="#2563eb" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
