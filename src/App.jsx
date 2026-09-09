@@ -2,7 +2,7 @@ import { useState } from 'react';
 import DashboardRenderer from './components/DashboardRenderer';
 import LoadingState from './components/LoadingState';
 
-const API_URL = 'http://localhost:3001/api/query';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [prompt, setPrompt] = useState('');
