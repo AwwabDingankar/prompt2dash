@@ -15,6 +15,7 @@ export default function AppPage({
     { icon: 'bar_chart', title: 'Show revenue by region', prompt: 'Show revenue by region' },
     { icon: 'trending_up', title: 'Monthly sales trend', prompt: 'Show monthly sales trend for the past year' },
     { icon: 'group', title: 'Top customers by LTV', prompt: 'Show top 10 customers by lifetime value' },
+    { icon: 'pie_chart', title: 'Churn breakdown by plan', prompt: 'Show churn breakdown by subscription plan' },
   ];
 
   function handleKeyDown(e) {

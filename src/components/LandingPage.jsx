@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import HeroDashboardMockup from './HeroDashboardMockup';
+import ContactModal from './ContactModal';
 
 /**
  * LandingPage — rendered from the Stitch "Intelligent AI Dashboard Builder" design.
@@ -229,8 +230,7 @@ export default function LandingPage({ onGetStarted }) {
   }, []);
 
   const [selectedPlan, setSelectedPlan] = useState('Professional');
-  const [contactForm, setContactForm] = useState({ name: '', email: '', dbType: '', message: '' });
-  const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   const handleCTA = (e) => {
     e.preventDefault();
@@ -239,20 +239,7 @@ export default function LandingPage({ onGetStarted }) {
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
-    const el = document.getElementById('contact-form-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    const msgInput = document.getElementById('contact-message');
-    if (msgInput) {
-      msgInput.focus();
-    }
-  };
-
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) return;
-    setContactSubmitted(true);
+    setShowContactModal(true);
   };
 
   return (
@@ -546,195 +533,6 @@ export default function LandingPage({ onGetStarted }) {
               </button>
             </div>
           </div>
-
-          {/* Permanently Rendered Premium Contact Us Form */}
-          <div
-            id="contact-form-section"
-            className="mt-xl md:mt-xxl bg-white rounded-[2rem] border border-black/[0.08] p-lg md:p-xxl shadow-2xl relative overflow-hidden"
-            style={{
-              boxShadow: '0 24px 64px -12px rgba(10,10,10,0.12), 0 4px 16px rgba(10,10,10,0.04)',
-            }}
-          >
-            {/* Subtle top ambient glow */}
-            <div
-              className="absolute -top-24 -right-24 w-72 h-72 rounded-full pointer-events-none opacity-40 blur-3xl"
-              style={{ backgroundColor: '#a4d4c5' }}
-            />
-            <div
-              className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full pointer-events-none opacity-30 blur-3xl"
-              style={{ backgroundColor: '#ffb084' }}
-            />
-
-            <div className="relative z-10 grid lg:grid-cols-12 gap-xl items-start">
-              {/* Left Column: Heading & Value props */}
-              <div className="lg:col-span-5 space-y-md">
-                <div className="inline-flex items-center gap-1.5 bg-[#f5f5f5] border border-black/10 rounded-full px-3 py-1">
-                  <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
-                  <span className="text-[11px] font-bold text-ink uppercase tracking-wider">
-                    Quick Response · &lt; 2 Hours
-                  </span>
-                </div>
-
-                <h3 className="font-display-sm text-ink text-2xl md:text-3xl font-bold tracking-tight">
-                  Get in touch with our team
-                </h3>
-
-                <p className="text-muted text-sm leading-relaxed">
-                  Whether you're exploring the <strong className="text-ink">{selectedPlan} plan</strong>, connecting custom data sources, or evaluating on-premise deployment, we're here to help you get up and running.
-                </p>
-
-                <div className="pt-sm space-y-2.5">
-                  {[
-                    'Direct chat with dashboard engineers',
-                    'Support for PostgreSQL, Snowflake & BigQuery',
-                    'Custom database schema optimization',
-                    'Zero spam. Your data stays 100% private',
-                  ].map((benefit) => (
-                    <div key={benefit} className="flex items-center gap-2 text-xs font-medium text-ink">
-                      <span className="material-symbols-outlined text-[16px] text-brand-mint">check_circle</span>
-                      <span>{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="pt-md border-t border-black/[0.06] flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-canvas flex items-center justify-center border border-black/10">
-                    <span className="material-symbols-outlined text-lg text-brand-pink">mail</span>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-muted uppercase font-semibold">Direct Email</p>
-                    <a href="mailto:awwabsaleem09@gmail.com" className="text-sm font-semibold text-ink hover:text-brand-pink transition-colors">
-                      awwabsaleem09@gmail.com
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Contact Form */}
-              <div className="lg:col-span-7 bg-canvas/30 rounded-2xl border border-black/[0.06] p-md md:p-lg">
-                {contactSubmitted ? (
-                  <div className="py-12 text-center space-y-3">
-                    <div className="w-16 h-16 rounded-full bg-brand-mint/20 border border-brand-mint/40 text-brand-mint flex items-center justify-center mx-auto">
-                      <span className="material-symbols-outlined text-4xl">check_circle</span>
-                    </div>
-                    <h4 className="font-bold text-xl text-ink">Thank you, {contactForm.name}!</h4>
-                    <p className="text-sm text-muted max-w-sm mx-auto leading-relaxed">
-                      Your inquiry for the <strong className="text-ink">{selectedPlan} plan</strong> has been successfully received. We'll be in touch at <strong className="text-ink">{contactForm.email}</strong> shortly.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setContactSubmitted(false);
-                        setContactForm({ name: '', email: '', dbType: '', message: '' });
-                      }}
-                      className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-ink bg-white border border-black/10 px-4 py-2 rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-sm">refresh</span>
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    {/* Plan selection pills */}
-                    <div>
-                      <label className="text-[11px] font-bold text-muted uppercase tracking-wider block mb-1.5">
-                        Inquiry For Plan
-                      </label>
-                      <div className="flex gap-2">
-                        {['Starter', 'Professional', 'Enterprise'].map((p) => (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => setSelectedPlan(p)}
-                            className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${selectedPlan === p
-                              ? 'bg-ink text-white border-ink shadow-sm'
-                              : 'bg-white text-muted border-black/10 hover:border-black/30'
-                              }`}
-                          >
-                            {selectedPlan === p && (
-                              <span className="material-symbols-outlined text-xs text-brand-mint">check</span>
-                            )}
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[11px] font-bold text-muted uppercase tracking-wider block mb-1">
-                          Your Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Alex Morgan"
-                          value={contactForm.name}
-                          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                          className="w-full bg-white text-ink text-sm px-3.5 py-2.5 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-ink transition-all shadow-xs"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[11px] font-bold text-muted uppercase tracking-wider block mb-1">
-                          Work Email <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          placeholder="alex@company.com"
-                          value={contactForm.email}
-                          onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                          className="w-full bg-white text-ink text-sm px-3.5 py-2.5 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-ink transition-all shadow-xs"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-bold text-muted uppercase tracking-wider block mb-1">
-                        Database / Tech Stack (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. PostgreSQL, Supabase, Snowflake, MySQL"
-                        value={contactForm.dbType}
-                        onChange={(e) => setContactForm({ ...contactForm, dbType: e.target.value })}
-                        className="w-full bg-white text-ink text-sm px-3.5 py-2.5 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-ink transition-all shadow-xs"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-bold text-muted uppercase tracking-wider block mb-1">
-                        Message / Requirements <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        id="contact-message"
-                        required
-                        rows="3"
-                        placeholder={`Tell us about what you want to achieve with the ${selectedPlan} plan...`}
-                        value={contactForm.message}
-                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                        className="w-full bg-white text-ink text-sm px-3.5 py-2.5 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-ink transition-all shadow-xs resize-none"
-                      />
-                    </div>
-
-                    <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <p className="text-[11px] text-muted flex items-center gap-1.5 order-2 sm:order-1">
-                        <span className="material-symbols-outlined text-[14px] text-[#10b981]">lock</span>
-                        <span>Encrypted &amp; private communication</span>
-                      </p>
-                      <button
-                        type="submit"
-                        className="w-full sm:w-auto bg-ink text-white font-button text-sm px-7 py-3 rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 order-1 sm:order-2"
-                      >
-                        <span>Send Message</span>
-                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* CTA BAND */}
@@ -807,6 +605,13 @@ export default function LandingPage({ onGetStarted }) {
           </div>
         </div>
       </footer>
+
+      {/* Enhanced Contact / Plan Inquiry Modal */}
+      <ContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        initialPlan={selectedPlan}
+      />
     </div>
   );
 }
