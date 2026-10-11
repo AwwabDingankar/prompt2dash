@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import LandingPage from './components/LandingPage';
 import EmptyState from './components/EmptyState';
 import DashboardRenderer from './components/DashboardRenderer';
@@ -87,10 +87,9 @@ function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon
 }
 
 const EXAMPLES = [
-  { icon: 'bar_chart', title: 'Revenue by region', prompt: 'Show revenue by region' },
-  { icon: 'trending_up', title: 'Monthly sales trend', prompt: 'Show monthly sales trend for the past year' },
-  { icon: 'group', title: 'Top customers by LTV', prompt: 'Show top 10 customers by lifetime value' },
-  { icon: 'pie_chart', title: 'Churn by plan', prompt: 'Show churn breakdown by subscription plan' },
+  { icon: 'bar_chart', title: 'Revenue by region', prompt: 'Executive sales overview by region and product category' },
+  { icon: 'trending_up', title: 'Monthly sales trend', prompt: 'Monthly revenue trend and category breakdown for 2025' },
+  { icon: 'inventory_2', title: 'Top performing products', prompt: 'Top performing products and regional distribution' },
 ];
 
 export default function App() {
@@ -104,6 +103,7 @@ export default function App() {
     const p = queryPrompt ?? prompt;
     if (!p.trim()) return;
 
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setView('result');
     setLoading(true);
     setError(null);
@@ -129,12 +129,17 @@ export default function App() {
     }
   }
 
+  const inputRef = useRef(null);
+
   function handleExampleSelect(examplePrompt) {
     setPrompt(examplePrompt);
-    runQuery(examplePrompt);
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
-  /* ── RESULT VIEW ─────────────────────────────────────────── */
+  /* ── RESULT VIEW (default width fit) ──────────────────────── */
   if (view === 'result') {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#fffaf0', fontFamily: 'Inter, sans-serif' }}>
@@ -147,8 +152,8 @@ export default function App() {
 
         {/* Prompt banner shown once results are ready */}
         {!loading && prompt && (
-          <div style={{ borderBottom: '1px solid rgba(10,10,10,0.06)', padding: '14px 28px', backgroundColor: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)' }}>
-            <div style={{ maxWidth: '1120px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ borderBottom: '1px solid rgba(10,10,10,0.06)', padding: '14px 28px', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
+            <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#ff4d8b' }}>auto_awesome</span>
                 <span style={{ fontSize: '14px', fontWeight: 600, color: '#0a0a0a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -181,8 +186,8 @@ export default function App() {
           </div>
         )}
 
-        {/* Dashboard content */}
-        <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '40px 32px' }}>
+        {/* Dashboard content — Aligned with navbar logo and landing page (1280px container) */}
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 28px 80px', width: '100%' }}>
           {loading && <LoadingState prompt={prompt} />}
           {error && !loading && (
             <EmptyState
@@ -195,12 +200,7 @@ export default function App() {
             />
           )}
           {result && !loading && (
-            <div>
-              <DashboardRenderer result={result} />
-              {result.summary && (
-                <p style={{ fontSize: '14px', color: '#6a6a6a', marginTop: '16px', lineHeight: 1.6 }}>{result.summary}</p>
-              )}
-            </div>
+            <DashboardRenderer result={result} />
           )}
         </div>
       </div>
@@ -238,6 +238,7 @@ export default function App() {
           <div style={{ backgroundColor: '#ffffff', border: '1px solid rgba(10,10,10,0.08)', borderRadius: '20px', padding: '8px 8px 8px 20px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 8px 32px -8px rgba(10,10,10,0.12), 0 2px 8px rgba(10,10,10,0.06)', maxWidth: '760px', margin: '0 auto 12px' }}>
             <span className="material-symbols-outlined" style={{ color: '#a4d4c5', fontSize: '22px', flexShrink: 0 }}>auto_awesome</span>
             <input
+              ref={inputRef}
               autoFocus
               type="text"
               value={prompt}

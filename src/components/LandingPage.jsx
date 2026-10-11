@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import HeroDashboardMockup from './HeroDashboardMockup';
 
 /**
  * LandingPage — rendered from the Stitch "Intelligent AI Dashboard Builder" design.
@@ -302,44 +303,7 @@ export default function LandingPage({ onGetStarted }) {
                 </button>
               </div>
             </div>
-            <div className="relative group order-2 md:order-none px-4 md:px-0">
-              <div
-                className="relative rounded-[2rem] md:rounded-[2.5rem] p-sm md:p-md animate-float transition-all duration-500"
-                style={{
-                  background: 'rgb(255,255,255)',
-                  boxShadow: 'rgba(255,255,255,0.8) 0px 2px 4px inset, rgba(0,0,0,0.05) 0px 10px 20px, rgba(0,0,0,0.1) 0px 30px 60px',
-                  border: '1px solid rgba(0,0,0,0.03)',
-                }}
-              >
-                <div className="relative group">
-                  <img
-                    alt="Business Intelligence Dashboard"
-                    className="rounded-lg md:rounded-xl w-full h-auto"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtZDTZYN9RQ6H-5jqimrgNL9fgpHCONqrEqIqME4jWtvquhxemUXp7lii5xuItzbckg9ijq8PgRrw2-J0SK0Ve0PS8n0Ok87h63yAunZEInmssuBlkH9ObFq6TBcQAIYytF33CDhb_CUXUsnFwfxtvfnOgHrEzhGJ6sQlbpG_cG4QGkhVVd_hXbdhatH4Ok0B7kG4ZaISjzXT1B-zBF53kUI-SaAdcQ_Y3OMjKcLg48Zn4tYhKDEN-MwCK_sKfjaWh7sn1w9YMmQ"
-                  />
-                  <div className="absolute inset-0 rounded-lg md:rounded-xl pointer-events-none" style={{ boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)', border: '1px solid rgba(255,255,255,0.2)' }} />
-                </div>
-                <div
-                  className="absolute -bottom-6 md:-bottom-10 -left-4 md:-left-10 p-md md:p-lg rounded-xl md:rounded-xxl max-w-[240px] md:max-w-xs transition-all duration-500"
-                  style={{
-                    background: 'rgba(255,255,255,0.9)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.8)',
-                    boxShadow: 'inset 0 1px 1px rgba(255,255,255,1), 0 20px 40px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05)',
-                  }}
-                >
-                  <div className="flex items-center gap-sm mb-xs">
-                    <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-brand-mint flex items-center justify-center text-ink">
-                      <span className="material-symbols-outlined text-xs md:text-sm">auto_awesome</span>
-                    </div>
-                    <span className="text-[10px] md:text-xs font-bold text-ink">AI Analyst</span>
-                  </div>
-                  <p className="text-[10px] md:text-xs text-muted leading-relaxed">
-                    "I've analyzed your Excel data and built a regional performance report. Would you like to share this with the marketing team?"
-                  </p>
-                </div>
-              </div>
-            </div>
+            <HeroDashboardMockup onGetStarted={handleCTA} />
           </div>
         </section>
 
