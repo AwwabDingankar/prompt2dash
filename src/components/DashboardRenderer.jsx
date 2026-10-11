@@ -68,20 +68,11 @@ function renderWidget(chart) {
 }
 
 export default function DashboardRenderer({ result }) {
-  const [showSqlModal, setShowSqlModal] = useState(false);
-  const [copiedIndex, setCopiedIndex] = useState(null);
-
   if (!result) return null;
 
   // Multi-chart dashboard layout
   if (result.isMultiChart || (result.charts && result.charts.length > 0)) {
     const { dashboard_title, summary, kpis = [], charts = [] } = result;
-
-    const copySql = (sqlText, idx) => {
-      navigator.clipboard.writeText(sqlText);
-      setCopiedIndex(idx);
-      setTimeout(() => setCopiedIndex(null), 2000);
-    };
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
@@ -155,34 +146,6 @@ export default function DashboardRenderer({ result }) {
               </p>
             )}
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button
-              onClick={() => setShowSqlModal(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: '#ffffff',
-                border: '1px solid rgba(10,10,10,0.12)',
-                borderRadius: '12px',
-                padding: '9px 16px',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#0a0a0a',
-                cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(10,10,10,0.05)',
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f7f2e8')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#ffffff')}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#ff4d8b' }}>
-                terminal
-              </span>
-              View SQL ({kpis.length + charts.length})
-            </button>
-          </div>
         </div>
 
         {/* Top KPI Cards Row */}
@@ -242,120 +205,7 @@ export default function DashboardRenderer({ result }) {
           </div>
         )}
 
-        {/* SQL Queries Inspection Modal */}
-        {showSqlModal && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(10,10,10,0.6)',
-              backdropFilter: 'blur(6px)',
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '24px',
-            }}
-            onClick={() => setShowSqlModal(false)}
-          >
-            <div
-              style={{
-                backgroundColor: '#ffffff',
-                borderRadius: '24px',
-                maxWidth: '800px',
-                width: '100%',
-                maxHeight: '85vh',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div
-                style={{
-                  padding: '20px 28px',
-                  borderBottom: '1px solid rgba(10,10,10,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: '#0a0a0a' }}>
-                    Generated PostgreSQL Queries
-                  </h3>
-                  <p style={{ fontSize: '13px', color: '#6a6a6a', margin: '4px 0 0' }}>
-                    Inspect the validated SQL queries executed across PostgreSQL to build this dashboard.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowSqlModal(false)}
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(10,10,10,0.05)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    color: '#0a0a0a',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.15s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(10,10,10,0.12)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(10,10,10,0.05)')}
-                >
-                  ✕
-                </button>
-              </div>
 
-              <div style={{ overflowY: 'auto', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* KPIs Queries */}
-                {kpis.map((kpi, idx) => (
-                  <div key={`kpi-sql-${idx}`} style={{ backgroundColor: '#faf9f5', borderRadius: '14px', padding: '16px', border: '1px solid rgba(10,10,10,0.06)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#ff4d8b' }}>KPI: {kpi.title}</span>
-                      <button
-                        onClick={() => copySql(kpi.sql, `kpi-${idx}`)}
-                        style={{ fontSize: '11px', fontWeight: 600, padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(10,10,10,0.1)', background: '#fff', cursor: 'pointer' }}
-                      >
-                        {copiedIndex === `kpi-${idx}` ? 'Copied!' : 'Copy SQL'}
-                      </button>
-                    </div>
-                    <pre style={{ margin: 0, fontSize: '12px', fontFamily: 'monospace', color: '#1e293b', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                      {kpi.sql}
-                    </pre>
-                  </div>
-                ))}
-
-                {/* Charts Queries */}
-                {charts.map((chart, idx) => (
-                  <div key={`chart-sql-${idx}`} style={{ backgroundColor: '#faf9f5', borderRadius: '14px', padding: '16px', border: '1px solid rgba(10,10,10,0.06)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#2563eb' }}>CHART: {chart.title} ({chart.chart_type})</span>
-                      <button
-                        onClick={() => copySql(chart.sql, `chart-${idx}`)}
-                        style={{ fontSize: '11px', fontWeight: 600, padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(10,10,10,0.1)', background: '#fff', cursor: 'pointer' }}
-                      >
-                        {copiedIndex === `chart-${idx}` ? 'Copied!' : 'Copy SQL'}
-                      </button>
-                    </div>
-                    <pre style={{ margin: 0, fontSize: '12px', fontFamily: 'monospace', color: '#1e293b', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                      {chart.sql}
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }

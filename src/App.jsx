@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage';
 import EmptyState from './components/EmptyState';
 import DashboardRenderer from './components/DashboardRenderer';
 import LoadingState from './components/LoadingState';
+import ApiKeyModal from './components/ApiKeyModal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/query';
 
@@ -30,18 +31,49 @@ function Logo({ onClick }) {
 }
 
 /** Shared sticky nav bar used in app + result views */
-function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon = 'arrow_back' }) {
+function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon = 'arrow_back', onOpenKeyModal, hasApiKey }) {
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255,250,240,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(10,10,10,0.06)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '68px', padding: '0 28px', maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
         <Logo onClick={onLogoClick} />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Subtle status indicator */}
-          <div className="hidden md:flex" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#6a6a6a', fontWeight: 500, backgroundColor: 'rgba(10,10,10,0.03)', padding: '5px 12px', borderRadius: '9999px', border: '1px solid rgba(10,10,10,0.04)' }}>
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
-            <span>Postgres analytics</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Gemini API Key button */}
+          <button
+            onClick={onOpenKeyModal}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12.5px',
+              color: '#0a0a0a',
+              fontWeight: 600,
+              backgroundColor: hasApiKey ? '#ffffff' : '#fff0f5',
+              border: hasApiKey ? '1px solid rgba(10,10,10,0.1)' : '1px solid rgba(255,77,139,0.3)',
+              borderRadius: '9999px',
+              padding: '6px 14px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              boxShadow: '0 1px 3px rgba(10,10,10,0.04)',
+              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+            }}
+            title="Configure Gemini API Key"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 3px 8px rgba(10,10,10,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(10,10,10,0.04)';
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#ff4d8b' }}>
+              vpn_key
+            </span>
+            <span>
+              {hasApiKey ? 'Gemini Key Configured' : 'Set Gemini Key'}
+            </span>
+          </button>
 
           {/* Premium "Back to site" button */}
           <button
@@ -99,9 +131,39 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // User-provided Gemini API key (persisted in LocalStorage)
+  const [apiKey, setApiKey] = useState(() => {
+    return localStorage.getItem('p2d_gemini_api_key') || '';
+  });
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [keyModalError, setKeyModalError] = useState('');
+
+  const handleSaveApiKey = (newKey) => {
+    const trimmed = (newKey || '').trim();
+    setApiKey(trimmed);
+    localStorage.setItem('p2d_gemini_api_key', trimmed);
+    setShowKeyModal(false);
+    setKeyModalError('');
+    if (view === 'landing') {
+      setView('app');
+    }
+  };
+
+  const handleOpenKeyModal = () => {
+    setKeyModalError('');
+    setShowKeyModal(true);
+  };
+
   async function runQuery(queryPrompt) {
     const p = queryPrompt ?? prompt;
     if (!p.trim()) return;
+
+    // Check if Gemini API key is configured
+    if (!apiKey || !apiKey.trim()) {
+      setKeyModalError('Please enter your Gemini API key to run queries.');
+      setShowKeyModal(true);
+      return;
+    }
 
     window.scrollTo({ top: 0, behavior: 'instant' });
     setView('result');
@@ -112,11 +174,18 @@ export default function App() {
     try {
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: p }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-gemini-api-key': apiKey.trim(),
+        },
+        body: JSON.stringify({ prompt: p, apiKey: apiKey.trim() }),
       });
       const json = await res.json();
       if (!res.ok) {
+        if (json.isApiKeyError) {
+          setKeyModalError(json.error || 'Your Gemini API key was rejected. Please verify it below.');
+          setShowKeyModal(true);
+        }
         setError(json.reason || json.error || 'Something went wrong');
       } else {
         setResult(json);
@@ -148,6 +217,8 @@ export default function App() {
           onBackClick={() => { setView('app'); setResult(null); setError(null); setLoading(false); }}
           backLabel="New query"
           backIcon="edit_note"
+          onOpenKeyModal={handleOpenKeyModal}
+          hasApiKey={Boolean(apiKey && apiKey.trim())}
         />
 
         {/* Prompt banner shown once results are ready */}
@@ -203,6 +274,15 @@ export default function App() {
             <DashboardRenderer result={result} />
           )}
         </div>
+
+        {/* API Key Modal */}
+        <ApiKeyModal
+          isOpen={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+          onSave={handleSaveApiKey}
+          currentKey={apiKey}
+          errorMessage={keyModalError}
+        />
       </div>
     );
   }
@@ -216,6 +296,8 @@ export default function App() {
           onBackClick={() => setView('landing')}
           backLabel="Back to site"
           backIcon="arrow_back"
+          onOpenKeyModal={handleOpenKeyModal}
+          hasApiKey={Boolean(apiKey && apiKey.trim())}
         />
 
         {/* Hero */}
@@ -292,10 +374,35 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        {/* API Key Modal */}
+        <ApiKeyModal
+          isOpen={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+          onSave={handleSaveApiKey}
+          currentKey={apiKey}
+          errorMessage={keyModalError}
+        />
       </div>
     );
   }
 
   /* ── LANDING VIEW ────────────────────────────────────────── */
-  return <LandingPage onGetStarted={() => setView('app')} />;
+  return (
+    <>
+      <LandingPage
+        onGetStarted={() => {
+          setKeyModalError('');
+          setShowKeyModal(true);
+        }}
+      />
+      <ApiKeyModal
+        isOpen={showKeyModal}
+        onClose={() => setShowKeyModal(false)}
+        onSave={handleSaveApiKey}
+        currentKey={apiKey}
+        errorMessage={keyModalError}
+      />
+    </>
+  );
 }
