@@ -34,83 +34,44 @@ function Logo({ onClick }) {
 function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon = 'arrow_back', onOpenKeyModal, hasApiKey }) {
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255,250,240,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(10,10,10,0.06)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '68px', padding: '0 28px', maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
+      <div className="flex justify-between items-center h-16 sm:h-[68px] px-3 sm:px-7 max-w-[1280px] mx-auto w-full">
         <Logo onClick={onLogoClick} />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Gemini API Key button */}
           <button
             onClick={onOpenKeyModal}
+            className="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-[12.5px] font-semibold rounded-full px-2.5 sm:px-3.5 py-1.5 transition-all shadow-xs cursor-pointer"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12.5px',
               color: '#0a0a0a',
-              fontWeight: 600,
               backgroundColor: hasApiKey ? '#ffffff' : '#fff0f5',
               border: hasApiKey ? '1px solid rgba(10,10,10,0.1)' : '1px solid rgba(255,77,139,0.3)',
-              borderRadius: '9999px',
-              padding: '6px 14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: '0 1px 3px rgba(10,10,10,0.04)',
               fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
             }}
             title="Configure Gemini API Key"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 3px 8px rgba(10,10,10,0.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 1px 3px rgba(10,10,10,0.04)';
-            }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#ff4d8b' }}>
+            <span className="material-symbols-outlined text-[14px] sm:text-[15px]" style={{ color: '#ff4d8b' }}>
               vpn_key
             </span>
-            <span>
+            <span className="hidden sm:inline">
               {hasApiKey ? 'Gemini Key Configured' : 'Set Gemini Key'}
+            </span>
+            <span className="sm:hidden">
+              {hasApiKey ? 'Key Configured' : 'Set Key'}
             </span>
           </button>
 
           {/* Premium "Back to site" button */}
           <button
             onClick={onBackClick}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: '#ffffff',
-              border: '1px solid rgba(10,10,10,0.1)',
-              borderRadius: '9999px',
-              padding: '8px 18px 8px 14px',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: '#0a0a0a',
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(10,10,10,0.05)',
-              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f7f2e8';
-              e.currentTarget.style.borderColor = 'rgba(10,10,10,0.18)';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(10,10,10,0.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.borderColor = 'rgba(10,10,10,0.1)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 1px 3px rgba(10,10,10,0.05)';
-            }}
+            className="inline-flex items-center gap-1 sm:gap-2 bg-white text-ink text-xs sm:text-[13px] font-semibold rounded-full px-2.5 sm:px-4 py-1.5 border border-black/10 shadow-xs hover:bg-[#f7f2e8] transition-all cursor-pointer"
+            style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#0a0a0a' }}>
+            <span className="material-symbols-outlined text-[16px] sm:text-[18px]">
               {backIcon}
             </span>
-            <span>{backLabel}</span>
+            <span className="hidden sm:inline">{backLabel}</span>
+            <span className="sm:hidden">{backLabel === 'Back to site' ? 'Site' : 'New'}</span>
           </button>
         </div>
       </div>
@@ -223,42 +184,29 @@ export default function App() {
 
         {/* Prompt banner shown once results are ready */}
         {!loading && prompt && (
-          <div style={{ borderBottom: '1px solid rgba(10,10,10,0.06)', padding: '14px 28px', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
-            <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#ff4d8b' }}>auto_awesome</span>
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#0a0a0a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div className="border-b border-black/[0.06] px-3.5 sm:px-7 py-2.5 sm:py-3.5 bg-white/70 backdrop-blur-md">
+            <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span className="material-symbols-outlined text-base sm:text-lg text-[#ff4d8b] flex-shrink-0">auto_awesome</span>
+                <span className="text-xs sm:text-sm font-semibold text-ink truncate">
                   "{prompt}"
                 </span>
               </div>
               <button
                 onClick={() => { setView('app'); setResult(null); }}
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#6a6a6a',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  flexShrink: 0,
-                  transition: 'color 0.2s',
-                  fontFamily: 'Inter, sans-serif',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#0a0a0a')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#6a6a6a')}
+                className="text-xs font-semibold text-muted hover:text-ink flex items-center gap-1 flex-shrink-0 cursor-pointer transition-colors"
+                style={{ fontFamily: 'Inter, sans-serif' }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>edit</span>
-                Edit prompt
+                <span className="material-symbols-outlined text-sm">edit</span>
+                <span className="hidden sm:inline">Edit prompt</span>
+                <span className="sm:hidden">Edit</span>
               </button>
             </div>
           </div>
         )}
 
         {/* Dashboard content — Aligned with navbar logo and landing page (1280px container) */}
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 28px 80px', width: '100%' }}>
+        <div className="max-w-[1280px] mx-auto px-3 sm:px-7 py-5 sm:py-8 pb-16 sm:pb-20 w-full box-border">
           {loading && <LoadingState prompt={prompt} />}
           {error && !loading && (
             <EmptyState
@@ -301,24 +249,24 @@ export default function App() {
         />
 
         {/* Hero */}
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '72px 24px 48px', textAlign: 'center' }}>
+        <div className="max-w-[860px] mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12 text-center">
           {/* Badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', border: '1px solid rgba(10,10,10,0.1)', borderRadius: '9999px', padding: '5px 14px 5px 8px', backgroundColor: '#ffffff', boxShadow: '0 1px 3px rgba(10,10,10,0.06)', marginBottom: '28px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', backgroundColor: '#0a0a0a', borderRadius: '9999px', padding: '2px 8px', letterSpacing: '0.5px' }}>AI</span>
-            <span style={{ fontSize: '13px', fontWeight: 500, color: '#3a3a3a' }}>GPT-4 powered insights &amp; dashboards</span>
+          <div className="inline-flex items-center gap-2 border border-black/10 rounded-full py-1 px-3 sm:px-3.5 bg-white shadow-xs mb-5 sm:mb-7">
+            <span className="text-[10px] sm:text-[11px] font-bold text-white bg-ink rounded-full px-2 py-0.5 tracking-wider">AI</span>
+            <span className="text-xs sm:text-[13px] font-medium text-body">GPT-4 powered insights &amp; dashboards</span>
           </div>
 
           {/* Headline */}
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif", fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 500, lineHeight: 1.05, letterSpacing: '-2px', color: '#0a0a0a', marginBottom: '16px' }}>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-ink mb-3 sm:mb-4 leading-tight">
             Ask your data anything
           </h1>
-          <p style={{ fontSize: '18px', color: '#6a6a6a', maxWidth: '520px', margin: '0 auto 40px', lineHeight: 1.6 }}>
+          <p className="text-sm sm:text-base md:text-lg text-muted max-w-[520px] mx-auto mb-7 sm:mb-10 leading-relaxed">
             Type a question in plain English — Prompt2Dash generates charts, tables, and summaries instantly.
           </p>
 
           {/* Prompt input */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px solid rgba(10,10,10,0.08)', borderRadius: '20px', padding: '8px 8px 8px 20px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 8px 32px -8px rgba(10,10,10,0.12), 0 2px 8px rgba(10,10,10,0.06)', maxWidth: '760px', margin: '0 auto 12px' }}>
-            <span className="material-symbols-outlined" style={{ color: '#a4d4c5', fontSize: '22px', flexShrink: 0 }}>auto_awesome</span>
+          <div className="bg-white border border-black/[0.08] rounded-2xl sm:rounded-[20px] p-2 sm:p-2.5 pl-3.5 sm:pl-5 flex items-center gap-2 sm:gap-3 shadow-lg max-w-[760px] mx-auto mb-3 w-full box-border">
+            <span className="material-symbols-outlined text-[#a4d4c5] text-xl sm:text-[22px] flex-shrink-0">auto_awesome</span>
             <input
               ref={inputRef}
               autoFocus
@@ -327,49 +275,44 @@ export default function App() {
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runQuery(); } }}
               placeholder="e.g. Show total revenue by region for Q3"
-              className="focus:outline-none focus:ring-0 focus:border-transparent"
-              style={{
-                flex: 1,
-                fontSize: '16px',
-                color: '#0a0a0a',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                boxShadow: 'none',
-                fontFamily: 'Inter, sans-serif',
-              }}
+              className="flex-1 text-sm sm:text-base text-ink bg-transparent border-none outline-none focus:outline-none min-w-0"
+              style={{ fontFamily: 'Inter, sans-serif' }}
             />
             <button
               onClick={() => runQuery()}
               disabled={!prompt.trim()}
-              style={{ backgroundColor: !prompt.trim() ? '#c4c7c7' : '#0a0a0a', color: '#ffffff', fontSize: '14px', fontWeight: 600, padding: '12px 24px', borderRadius: '12px', border: 'none', cursor: !prompt.trim() ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, fontFamily: 'Inter, sans-serif', transition: 'background-color 0.2s' }}
+              className="text-xs sm:text-sm font-semibold text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl border-none cursor-pointer flex items-center gap-1.5 flex-shrink-0 transition-colors"
+              style={{
+                backgroundColor: !prompt.trim() ? '#c4c7c7' : '#0a0a0a',
+                cursor: !prompt.trim() ? 'not-allowed' : 'pointer',
+                fontFamily: 'Inter, sans-serif',
+              }}
             >
-              Generate →
+              <span>Generate</span>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
-          <p style={{ fontSize: '12px', color: '#9a9a9a', marginTop: '8px' }}>Connected: Postgres · prod_analytics</p>
+          <p className="text-[11px] sm:text-xs text-muted mt-2">Connected: Postgres · prod_analytics</p>
         </div>
 
         {/* Example cards */}
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px 80px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 600, color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '1.5px', textAlign: 'center', marginBottom: '20px' }}>Try an example</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+        <div className="max-w-[860px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+          <p className="text-[11px] sm:text-xs font-semibold text-muted uppercase tracking-widest text-center mb-4 sm:mb-5">Try an example</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {EXAMPLES.map((ex) => (
               <button
                 key={ex.title}
                 onClick={() => handleExampleSelect(ex.prompt)}
-                style={{ backgroundColor: '#ffffff', border: '1px solid rgba(10,10,10,0.08)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', textAlign: 'left', boxShadow: '0 1px 4px rgba(10,10,10,0.04)', transition: 'border-color 0.2s, transform 0.15s, box-shadow 0.2s', width: '100%' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#a4d4c5'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(10,10,10,0.08)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(10,10,10,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 4px rgba(10,10,10,0.04)'; }}
+                className="bg-white border border-black/[0.08] rounded-2xl p-3.5 sm:p-4 flex items-center gap-3 cursor-pointer text-left shadow-xs hover:border-[#a4d4c5] hover:-translate-y-0.5 hover:shadow-md transition-all w-full"
               >
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#f5f0e0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#1a3a3a' }}>{ex.icon}</span>
+                <div className="w-9 h-9 rounded-xl bg-[#f5f0e0] flex items-center justify-center flex-shrink-0 text-brand-teal">
+                  <span className="material-symbols-outlined text-lg">{ex.icon}</span>
                 </div>
-                <div style={{ minWidth: 0 }}>
-                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#0a0a0a', margin: 0 }}>{ex.title}</p>
-                  <p style={{ fontSize: '12px', color: '#6a6a6a', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ex.prompt}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-semibold text-ink m-0 leading-snug">{ex.title}</p>
+                  <p className="text-[11px] text-muted m-0 mt-0.5 truncate">{ex.prompt}</p>
                 </div>
-                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#c4c7c7', marginLeft: 'auto', flexShrink: 0 }}>arrow_outward</span>
+                <span className="material-symbols-outlined text-base text-black/30 ml-auto flex-shrink-0">arrow_outward</span>
               </button>
             ))}
           </div>

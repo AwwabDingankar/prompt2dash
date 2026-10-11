@@ -75,73 +75,23 @@ export default function DashboardRenderer({ result }) {
     const { dashboard_title, summary, kpis = [], charts = [] } = result;
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+      <div className="flex flex-col gap-4 sm:gap-8 w-full">
         {/* Dashboard Header Bar */}
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '24px',
-            padding: '28px 32px',
-            border: '1px solid rgba(10,10,10,0.07)',
-            boxShadow: '0 4px 20px -4px rgba(10,10,10,0.04)',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            gap: '24px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div style={{ flex: 1, minWidth: '280px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  backgroundColor: '#0a0a0a',
-                  padding: '3px 8px',
-                  borderRadius: '9999px',
-                  letterSpacing: '0.5px',
-                }}
-              >
+        <div className="bg-white rounded-2xl sm:rounded-[24px] p-4 sm:p-7 md:p-8 border border-black/[0.07] shadow-sm flex flex-col md:flex-row justify-between items-start gap-3 sm:gap-6 flex-wrap">
+          <div className="flex-1 min-w-0 w-full">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <span className="text-[10px] sm:text-[11px] font-bold text-white bg-ink px-2 sm:px-2.5 py-0.5 rounded-full tracking-wider">
                 LIVE DASHBOARD
               </span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#10b981',
-                  backgroundColor: '#ecfdf5',
-                  padding: '2px 8px',
-                  borderRadius: '9999px',
-                }}
-              >
+              <span className="text-[11px] sm:text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                 {charts.length} Visualizations
               </span>
             </div>
-            <h1
-              style={{
-                fontSize: '26px',
-                fontWeight: 800,
-                color: '#0a0a0a',
-                margin: 0,
-                letterSpacing: '-0.8px',
-                fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-              }}
-            >
+            <h1 className="text-xl sm:text-2xl md:text-[26px] font-extrabold text-ink m-0 tracking-tight font-display leading-tight">
               {dashboard_title || 'Executive Analytics Overview'}
             </h1>
             {summary && (
-              <p
-                style={{
-                  fontSize: '14px',
-                  color: '#5a5a5a',
-                  margin: '8px 0 0',
-                  lineHeight: 1.6,
-                  maxWidth: '820px',
-                }}
-              >
+              <p className="text-xs sm:text-sm text-[#5a5a5a] mt-2 leading-relaxed max-w-[820px]">
                 {summary}
               </p>
             )}
@@ -150,14 +100,7 @@ export default function DashboardRenderer({ result }) {
 
         {/* Top KPI Cards Row */}
         {kpis.length > 0 && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '16px',
-              width: '100%',
-            }}
-          >
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 w-full">
             {kpis.map((kpi, index) => (
               <KpiCard
                 key={kpi.id || `kpi-${index}`}
@@ -170,16 +113,9 @@ export default function DashboardRenderer({ result }) {
           </div>
         )}
 
-        {/* Multi-Chart Grid */}
+        {/* Multi-Chart Grid (1 column on mobile, 2 columns on large screens) */}
         {charts.length > 0 && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
-              gap: '24px',
-              width: '100%',
-            }}
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full">
             {charts.map((chart, index) => {
               const isLineChart = chart.chart_type === 'LineChart';
               const isDataTable = chart.chart_type === 'DataTable';
@@ -192,11 +128,7 @@ export default function DashboardRenderer({ result }) {
               return (
                 <div
                   key={chart.id || `chart-${index}`}
-                  style={{
-                    gridColumn: isFull ? '1 / -1' : 'auto',
-                    minWidth: 0,
-                    width: '100%',
-                  }}
+                  className={`${isFull ? 'col-span-1 lg:col-span-2' : 'col-span-1'} min-w-0 w-full`}
                 >
                   {renderWidget(chart)}
                 </div>
@@ -204,8 +136,6 @@ export default function DashboardRenderer({ result }) {
             })}
           </div>
         )}
-
-
       </div>
     );
   }

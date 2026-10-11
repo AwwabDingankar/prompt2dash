@@ -39,53 +39,24 @@ export default function BarChartView({ title, data, xKey, yKey, subtitle }) {
   const resolvedYKey = yKey || Object.keys(data[0])[1];
 
   return (
-    <div
-      style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '20px',
-        padding: '24px 28px',
-        border: '1px solid rgba(10,10,10,0.07)',
-        boxShadow: '0 4px 20px -4px rgba(10,10,10,0.04)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        minHeight: '360px',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div>
-          <h3
-            style={{
-              fontSize: '16px',
-              fontWeight: 700,
-              color: '#0a0a0a',
-              margin: 0,
-              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-            }}
-          >
+    <div className="bg-white rounded-2xl sm:rounded-[20px] p-4 sm:p-6 md:p-7 border border-black/[0.07] shadow-sm flex flex-col h-full min-h-[320px] sm:min-h-[360px] min-w-0 w-full">
+      <div className="flex items-center justify-between gap-2 mb-3 sm:mb-5 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm sm:text-base font-bold text-ink m-0 font-display truncate">
             {title}
           </h3>
           {subtitle && (
-            <p style={{ fontSize: '12px', color: '#8a8a8a', margin: '4px 0 0' }}>{subtitle}</p>
+            <p className="text-[11px] sm:text-xs text-muted m-0 mt-0.5 truncate">{subtitle}</p>
           )}
         </div>
-        <span
-          style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#2563eb',
-            backgroundColor: '#eff6ff',
-            padding: '3px 10px',
-            borderRadius: '9999px',
-          }}
-        >
+        <span className="text-[10px] sm:text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 sm:px-2.5 py-0.5 rounded-full flex-shrink-0">
           Bar Chart
         </span>
       </div>
 
-      <div style={{ width: '100%', height: '280px', minWidth: 0 }}>
+      <div className="w-full h-[240px] sm:h-[280px] min-w-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 15, right: 20, left: 10, bottom: 20 }}>
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 15 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey={resolvedXKey}

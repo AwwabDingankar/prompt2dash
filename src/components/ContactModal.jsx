@@ -89,7 +89,7 @@ export default function ContactModal({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-5 bg-black/65 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[120] flex items-center justify-center p-2.5 sm:p-5 bg-black/65 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -101,9 +101,9 @@ export default function ContactModal({
         <div className="h-1.5 w-full bg-gradient-to-r from-[#ff4d8b] via-[#b8a4ed] to-[#a4d4c5]" />
 
         {/* Modal Header */}
-        <div className="px-5 sm:px-7 pt-5 sm:pt-6 pb-4 border-b border-black/[0.06] flex items-start justify-between gap-4">
+        <div className="px-4 sm:px-7 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-black/[0.06] flex items-start justify-between gap-3 sm:gap-4">
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-ink tracking-tight">
+            <h3 className="text-lg sm:text-2xl font-bold text-ink tracking-tight">
               Get in Touch — {selectedPlan} Plan
             </h3>
             <p className="text-xs sm:text-sm text-muted mt-0.5">
@@ -116,14 +116,14 @@ export default function ContactModal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 text-muted hover:text-ink flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/5 hover:bg-black/10 text-muted hover:text-ink flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-lg">close</span>
+            <span className="material-symbols-outlined text-base sm:text-lg">close</span>
           </button>
         </div>
 
         {/* Modal Content */}
-        <div className="p-5 sm:p-7 max-h-[78vh] overflow-y-auto">
+        <div className="p-4 sm:p-7 max-h-[82vh] overflow-y-auto">
           {submitted ? (
             /* Submission Success View */
             <div className="py-8 text-center space-y-4">

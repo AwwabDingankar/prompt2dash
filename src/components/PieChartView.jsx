@@ -39,52 +39,23 @@ export default function PieChartView({ title, data, nameKey, valueKey, subtitle 
   const resolvedValueKey = valueKey || Object.keys(data[0])[1];
 
   return (
-    <div
-      style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '20px',
-        padding: '24px 28px',
-        border: '1px solid rgba(10,10,10,0.07)',
-        boxShadow: '0 4px 20px -4px rgba(10,10,10,0.04)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        minHeight: '360px',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <div>
-          <h3
-            style={{
-              fontSize: '16px',
-              fontWeight: 700,
-              color: '#0a0a0a',
-              margin: 0,
-              fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-            }}
-          >
+    <div className="bg-white rounded-2xl sm:rounded-[20px] p-4 sm:p-6 md:p-7 border border-black/[0.07] shadow-sm flex flex-col h-full min-h-[320px] sm:min-h-[360px] min-w-0 w-full">
+      <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm sm:text-base font-bold text-ink m-0 font-display truncate">
             {title}
           </h3>
           {subtitle && (
-            <p style={{ fontSize: '12px', color: '#8a8a8a', margin: '4px 0 0' }}>{subtitle}</p>
+            <p className="text-[11px] sm:text-xs text-muted m-0 mt-0.5 truncate">{subtitle}</p>
           )}
         </div>
-        <span
-          style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#ff4d8b',
-            backgroundColor: '#fff1f6',
-            padding: '3px 10px',
-            borderRadius: '9999px',
-          }}
-        >
+        <span className="text-[10px] sm:text-[11px] font-semibold text-[#ff4d8b] bg-[#fff1f6] px-2 sm:px-2.5 py-0.5 rounded-full flex-shrink-0">
           Distribution
         </span>
       </div>
 
-      <div style={{ flex: 1, width: '100%', minHeight: '260px' }}>
-        <ResponsiveContainer width="100%" height={260}>
+      <div className="flex-1 w-full h-[240px] sm:h-[260px] min-h-[220px] min-w-0">
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}

@@ -75,25 +75,19 @@ export default function ApiKeyModal({
         style={{
           width: '100%',
           maxWidth: '540px',
+          maxHeight: '92vh',
           backgroundColor: '#ffffff',
           borderRadius: '24px',
           boxShadow: '0 24px 60px -12px rgba(10,10,10,0.35), 0 8px 24px rgba(10,10,10,0.1)',
           border: '1px solid rgba(10,10,10,0.08)',
-          overflow: 'hidden',
+          overflowY: 'auto',
           fontFamily: "'Inter', sans-serif",
           animation: 'scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {/* Header bar */}
         <div
-          style={{
-            padding: '24px 28px 16px',
-            borderBottom: '1px solid rgba(10,10,10,0.06)',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: '16px',
-          }}
+          className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-black/[0.06] flex items-start justify-between gap-3 sm:gap-4"
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div
@@ -163,7 +157,7 @@ export default function ApiKeyModal({
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '24px 28px' }}>
+        <div className="p-4 sm:p-7">
           {/* Budget Notice Banner */}
           <div
             style={{

@@ -34,19 +34,7 @@ export default function KpiCard({ title, value, subtitle, format, icon }) {
 
   return (
     <div
-      style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '20px',
-        padding: '22px 24px',
-        border: '1px solid rgba(10,10,10,0.07)',
-        boxShadow: '0 4px 20px -4px rgba(10,10,10,0.04), 0 1px 3px rgba(10,10,10,0.02)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
+      className="bg-white rounded-2xl sm:rounded-[20px] p-3.5 sm:p-5 md:p-6 border border-black/[0.07] shadow-sm flex flex-col justify-between transition-all relative overflow-hidden min-w-0"
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
         e.currentTarget.style.boxShadow = '0 12px 28px -6px rgba(10,10,10,0.08), 0 2px 6px rgba(10,10,10,0.03)';
@@ -56,63 +44,23 @@ export default function KpiCard({ title, value, subtitle, format, icon }) {
         e.currentTarget.style.boxShadow = '0 4px 20px -4px rgba(10,10,10,0.04), 0 1px 3px rgba(10,10,10,0.02)';
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <span
-          style={{
-            fontSize: '12px',
-            fontWeight: 600,
-            color: '#6a6a6a',
-            textTransform: 'uppercase',
-            letterSpacing: '0.8px',
-            fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-          }}
-        >
+      <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+        <span className="text-[10px] sm:text-xs font-semibold text-muted uppercase tracking-wider font-display truncate">
           {title}
         </span>
-        <div
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            backgroundColor: '#fff1f6',
-            color: '#ff4d8b',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <Icon size={18} />
+        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-[#fff1f6] text-[#ff4d8b] flex items-center justify-center flex-shrink-0">
+          <Icon size={16} className="sm:w-[18px] sm:h-[18px]" />
         </div>
       </div>
 
-      <div>
-        <div
-          style={{
-            fontSize: '32px',
-            fontWeight: 800,
-            color: '#0a0a0a',
-            letterSpacing: '-1px',
-            lineHeight: 1.1,
-            fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
-          }}
-        >
+      <div className="min-w-0">
+        <div className="text-xl sm:text-2xl md:text-3xl font-extrabold text-ink tracking-tight font-display leading-tight truncate">
           {formattedValue}
         </div>
         {subtitle && (
-          <div
-            style={{
-              fontSize: '12px',
-              color: '#9a9a9a',
-              marginTop: '6px',
-              fontWeight: 500,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-            <span>{subtitle}</span>
+          <div className="text-[10px] sm:text-xs text-muted mt-1 font-medium flex items-center gap-1.5 truncate">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+            <span className="truncate">{subtitle}</span>
           </div>
         )}
       </div>

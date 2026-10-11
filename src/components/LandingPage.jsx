@@ -231,6 +231,7 @@ export default function LandingPage({ onGetStarted }) {
 
   const [selectedPlan, setSelectedPlan] = useState('Professional');
   const [showContactModal, setShowContactModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleCTA = (e) => {
     e.preventDefault();
@@ -243,7 +244,7 @@ export default function LandingPage({ onGetStarted }) {
   };
 
   return (
-    <div className="bg-canvas text-ink font-body-md selection:bg-brand-lavender/30" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="bg-canvas text-ink font-body-md selection:bg-brand-lavender/30 overflow-x-hidden w-full max-w-full" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Grain overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-multiply"
@@ -251,11 +252,11 @@ export default function LandingPage({ onGetStarted }) {
       />
 
       {/* NAV */}
-      <nav className="top-0 sticky z-50 bg-canvas/80 backdrop-blur-md border-b border-ink/5">
-        <div className="flex justify-between items-center h-16 px-md md:px-lg max-w-container-max mx-auto w-full">
+      <nav className="top-0 sticky z-50 bg-[#fffaf0] border-b border-black/[0.06] shadow-xs">
+        <div className="flex justify-between items-center h-16 px-4 md:px-lg max-w-container-max mx-auto w-full">
           <div className="flex items-center gap-md lg:gap-xl">
             <a className="flex items-center" href="#">
-              <svg height="40" style={{ height: '40px', width: 'auto', display: 'block' }} viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+              <svg height="36" className="sm:h-10 w-auto block max-w-[150px] sm:max-w-none" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <style>{`.dl-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 46px; fill: #0a0a0a; letter-spacing: -1.5px; } .dl-outer { fill: #0a0a0a; } .dl-inner { fill: #ff4d8b; }`}</style>
                 </defs>
@@ -271,47 +272,97 @@ export default function LandingPage({ onGetStarted }) {
             <div className="hidden md:flex gap-md lg:gap-lg">
               <a className="font-nav-link text-nav-link text-muted hover:text-ink transition-colors" href="#how-it-works">Solutions</a>
               <a className="font-nav-link text-nav-link text-muted hover:text-ink transition-colors" href="#pricing">Plans</a>
-              <a className="font-nav-link text-nav-link text-muted hover:text-ink transition-colors" href="#">Case Studies</a>
+              <a className="font-nav-link text-nav-link text-muted hover:text-ink transition-colors" href="#case-studies">Case Studies</a>
             </div>
           </div>
-          <div className="flex items-center gap-sm md:gap-md">
-            <a onClick={handleCTA} href="#" className="bg-ink text-white font-button text-button px-md md:px-lg py-sm rounded-lg hover:opacity-90 transition-all duration-300">
+          <div className="flex items-center gap-2 sm:gap-md">
+            <a onClick={handleCTA} href="#" className="bg-ink text-white font-button text-xs sm:text-button px-3 sm:px-lg py-2 sm:py-sm rounded-lg hover:opacity-90 transition-all duration-300">
               Try for free
             </a>
-            <button className="md:hidden flex items-center p-2" id="menu-toggle">
-              <span className="material-symbols-outlined text-ink">menu</span>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden flex items-center p-2 text-ink rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
+              aria-label="Toggle navigation menu"
+            >
+              <span className="material-symbols-outlined text-2xl">
+                {mobileMenuOpen ? 'close' : 'menu'}
+              </span>
             </button>
           </div>
         </div>
-        <div className="hidden absolute top-16 left-0 w-full bg-canvas border-b border-ink/5 flex-col p-lg gap-lg shadow-xl md:hidden" id="mobile-menu">
-          <a className="font-nav-link text-nav-link text-muted hover:text-ink" href="#how-it-works">Solutions</a>
-          <a className="font-nav-link text-nav-link text-muted hover:text-ink" href="#pricing">Plans</a>
-          <a className="font-nav-link text-nav-link text-muted hover:text-ink" href="#">Case Studies</a>
-          <a onClick={handleCTA} href="#" className="bg-ink text-white font-button text-button px-md py-sm rounded-lg text-center hover:opacity-90">
-            Try for free
-          </a>
-        </div>
+
+        {/* Mobile dropdown menu with solid background, z-50, and clean padding/spacing */}
+        {mobileMenuOpen && (
+          <div
+            className="md:hidden absolute top-16 left-0 w-full flex flex-col p-6 gap-4 border-b border-black/10 shadow-2xl z-50 animate-fadeIn"
+            style={{ backgroundColor: '#fffaf0' }}
+          >
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-nav-link text-base font-semibold text-muted hover:text-ink py-2 px-1 border-b border-black/5 transition-colors"
+              href="#how-it-works"
+            >
+              Solutions
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-nav-link text-base font-semibold text-muted hover:text-ink py-2 px-1 border-b border-black/5 transition-colors"
+              href="#pricing"
+            >
+              Plans
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-nav-link text-base font-semibold text-muted hover:text-ink py-2 px-1 border-b border-black/5 transition-colors"
+              href="#case-studies"
+            >
+              Case Studies
+            </a>
+            <a
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                handleCTA(e);
+              }}
+              href="#"
+              className="bg-ink text-white font-button text-sm py-3 px-6 rounded-xl text-center hover:opacity-90 mt-2 shadow-md flex items-center justify-center font-semibold cursor-pointer"
+            >
+              Try for free →
+            </a>
+          </div>
+        )}
       </nav>
 
       <main>
         {/* HERO */}
-        <section className="pt-xl md:pt-xxl pb-xl md:pb-section px-lg max-w-container-max mx-auto overflow-hidden relative">
+        <section className="pt-4 sm:pt-xl md:pt-xxl pb-6 sm:pb-xl md:pb-section px-4 sm:px-lg max-w-container-max mx-auto overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/p6.png')" }} />
-          <div className="grid md:grid-cols-2 gap-xl md:gap-xxl items-center">
-            <div className="space-y-lg md:space-y-xl text-center md:text-left order-1 md:order-none">
-              <h1 className="font-display-xl text-display-xl-mobile md:text-display-xl text-ink max-w-xl mx-auto md:mx-0 leading-[1.1] md:leading-[1] tracking-tight md:tracking-[-2.5px]">
-                Make Data-Driven Decisions Faster with AI
+
+          <div className="grid md:grid-cols-2 gap-5 md:gap-xxl items-center">
+            <div className="space-y-2.5 sm:space-y-lg md:space-y-xl text-center md:text-left order-1 md:order-none">
+              <h1
+                className="font-display text-[22px] xs:text-2xl sm:text-4xl md:text-5xl lg:text-display-xl text-ink w-full max-w-full md:max-w-xl mx-auto md:mx-0 leading-tight md:leading-[1] tracking-tight md:tracking-[-2.5px] font-bold break-words"
+                style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
+              >
+                <span className="md:hidden">Make Decisions Faster with AI</span>
+                <span className="hidden md:inline">Make Data-Driven Decisions Faster with AI</span>
               </h1>
-              <p className="text-muted font-body-md text-body-md md:text-title-md max-w-lg mx-auto md:mx-0">
-                Empower your business teams to generate insights and interactive dashboards in seconds—no technical skills required.
+              <p className="text-muted text-xs sm:text-sm md:text-title-md max-w-lg mx-auto md:mx-0 leading-relaxed">
+                <span className="md:hidden">Generate insights and interactive dashboards in seconds—no technical skills required.</span>
+                <span className="hidden md:inline">Empower your business teams to generate insights and interactive dashboards in seconds—no technical skills required.</span>
               </p>
-              <div className="flex flex-col sm:flex-row flex-wrap gap-md justify-center md:justify-start">
-                <a onClick={handleCTA} href="#" className="bg-ink text-white font-button text-button px-xxl py-md hover:scale-105 transition-transform flex items-center justify-center rounded-2xl">
+              <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 sm:gap-md pt-2 w-full">
+                <a
+                  onClick={handleCTA}
+                  href="#"
+                  className="w-full max-w-[280px] md:w-auto bg-ink text-white font-button text-xs sm:text-button px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl hover:scale-105 transition-transform flex items-center justify-center shadow-md cursor-pointer whitespace-nowrap text-center mx-auto md:mx-0"
+                >
                   Get Started Free
                 </a>
-                <button className="bg-white border border-ink/10 text-ink font-button text-button px-xxl py-md hover:bg-white/50 flex items-center justify-center gap-xs transition-all shadow-sm rounded-2xl">
-                  <span className="material-symbols-outlined">play_circle</span>
-                  Watch Demo
+                <button
+                  className="hidden md:inline-flex bg-white border border-ink/10 text-ink font-button text-xs sm:text-button px-4 sm:px-6 py-3.5 sm:py-4 hover:bg-white/50 items-center justify-center gap-1.5 transition-all shadow-xs rounded-xl sm:rounded-2xl cursor-pointer whitespace-nowrap"
+                >
+                  <span className="material-symbols-outlined text-base">play_circle</span>
+                  <span>Watch Demo</span>
                 </button>
               </div>
             </div>
