@@ -8,24 +8,28 @@ export default function ApiKeyModal({
   isOpen,
   onClose,
   onSave,
+  onValidate,
   currentKey = '',
   errorMessage = '',
 }) {
   const [keyInput, setKeyInput] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setKeyInput(currentKey || '');
       setValidationError(errorMessage || '');
+      setIsValidating(false);
     }
   }, [isOpen, currentKey, errorMessage]);
 
   if (!isOpen) return null;
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e?.preventDefault();
+    if (isValidating) return;
     const trimmed = keyInput.trim();
     if (!trimmed) {
       setValidationError('Please enter a valid Gemini API key.');
@@ -35,8 +39,20 @@ export default function ApiKeyModal({
       setValidationError('The API key seems too short. Please check your Google AI Studio key.');
       return;
     }
+
     setValidationError('');
-    onSave(trimmed);
+    setIsValidating(true);
+
+    try {
+      if (onValidate) {
+        await onValidate(trimmed);
+      }
+      onSave(trimmed);
+    } catch (err) {
+      setValidationError(err.message || 'Invalid Gemini API key. Please check your key from Google AI Studio.');
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   const handlePaste = async () => {
@@ -305,9 +321,27 @@ export default function ApiKeyModal({
               </div>
 
               {validationError && (
-                <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#ef4444', fontWeight: 500 }}>
-                  {validationError}
-                </p>
+                <div
+                  style={{
+                    margin: '10px 0 0',
+                    padding: '9px 12px',
+                    borderRadius: '10px',
+                    backgroundColor: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    fontSize: '12px',
+                    color: '#dc2626',
+                    fontWeight: 500,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#dc2626', flexShrink: 0, marginTop: '1px' }}>
+                    error
+                  </span>
+                  <span>{validationError}</span>
+                </div>
               )}
             </div>
 
@@ -334,6 +368,7 @@ export default function ApiKeyModal({
               {onClose && (
                 <button
                   type="button"
+                  disabled={isValidating}
                   onClick={onClose}
                   style={{
                     padding: '11px 20px',
@@ -343,11 +378,16 @@ export default function ApiKeyModal({
                     backgroundColor: '#f5f5f5',
                     border: '1px solid rgba(10,10,10,0.06)',
                     borderRadius: '12px',
-                    cursor: 'pointer',
+                    cursor: isValidating ? 'not-allowed' : 'pointer',
                     transition: 'all 0.15s',
+                    opacity: isValidating ? 0.6 : 1,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e9e9e9')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
+                  onMouseEnter={(e) => {
+                    if (!isValidating) e.currentTarget.style.backgroundColor = '#e9e9e9';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isValidating) e.currentTarget.style.backgroundColor = '#f5f5f5';
+                  }}
                 >
                   Cancel
                 </button>
@@ -355,32 +395,58 @@ export default function ApiKeyModal({
 
               <button
                 type="submit"
+                disabled={isValidating}
                 style={{
                   padding: '11px 24px',
                   fontSize: '13.5px',
                   fontWeight: 600,
                   color: '#ffffff',
-                  backgroundColor: '#0a0a0a',
+                  backgroundColor: isValidating ? '#3a3a3a' : '#0a0a0a',
                   border: 'none',
                   borderRadius: '12px',
-                  cursor: 'pointer',
+                  cursor: isValidating ? 'not-allowed' : 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
                   transition: 'all 0.15s',
+                  opacity: isValidating ? 0.85 : 1,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#222222';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  if (!isValidating) {
+                    e.currentTarget.style.backgroundColor = '#222222';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#0a0a0a';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  if (!isValidating) {
+                    e.currentTarget.style.backgroundColor = '#0a0a0a';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }
                 }}
               >
-                <span>Save &amp; Continue</span>
-                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                {isValidating ? (
+                  <>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        fontSize: '16px',
+                        animation: 'spin 1s linear infinite',
+                        display: 'inline-block',
+                      }}
+                    >
+                      progress_activity
+                    </span>
+                    <span>Verifying key...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Save &amp; continue</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                      arrow_forward
+                    </span>
+                  </>
+                )}
               </button>
             </div>
           </form>

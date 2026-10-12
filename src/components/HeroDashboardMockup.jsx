@@ -14,13 +14,12 @@ export default function HeroDashboardMockup({ onGetStarted }) {
   const activeData = MONTH_DATA.find((m) => m.month === activeMonth) || MONTH_DATA[5];
 
   return (
-    <div className="relative group order-2 md:order-none px-0 w-full max-w-full md:max-w-[620px] mx-auto overflow-hidden">
+    <div className="relative group order-2 md:order-none px-0 w-full max-w-full md:max-w-[620px] mx-auto">
       {/* Outer Clay Card Container */}
       <div
-        className="relative rounded-[1.25rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-2.5 sm:p-4 md:p-5 animate-float transition-all duration-500 w-full max-w-full box-border scale-95 xs:scale-100 md:scale-100 origin-top"
+        className="relative rounded-[1.25rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-2.5 sm:p-4 md:p-5 animate-float transition-all duration-500 w-full max-w-full box-border scale-95 xs:scale-100 md:scale-100 origin-top shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)]"
         style={{
           background: '#ffffff',
-          boxShadow: 'rgba(255,255,255,0.9) 0px 2px 4px inset, rgba(0,0,0,0.05) 0px 10px 24px, rgba(0,0,0,0.1) 0px 24px 48px -6px',
           border: '1px solid rgba(10,10,10,0.06)',
         }}
       >
@@ -202,12 +201,12 @@ export default function HeroDashboardMockup({ onGetStarted }) {
           </div>
         </div>
 
-        {/* Desktop Floating AI Analyst Card (Preserved original floating glass card) */}
+        {/* Desktop Floating AI Analyst Card (overlapping bottom-left edge) */}
         <div
           onClick={onGetStarted}
-          className="hidden md:block absolute -bottom-8 -left-8 p-4 rounded-2xl max-w-xs transition-all duration-300 cursor-pointer hover:scale-105 group/analyst z-30"
+          className="hidden md:block absolute -bottom-6 -left-6 p-3.5 sm:p-4 rounded-2xl max-w-[280px] sm:max-w-xs transition-all duration-300 cursor-pointer hover:scale-105 group/analyst z-30 whitespace-normal"
           style={{
-            background: 'rgba(255, 255, 255, 0.94)',
+            background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(16px)',
             border: '1px solid rgba(10, 10, 10, 0.08)',
             boxShadow: '0 20px 40px -8px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.04)',
@@ -215,17 +214,17 @@ export default function HeroDashboardMockup({ onGetStarted }) {
         >
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded-full bg-[#a4d4c5] flex items-center justify-center text-ink shadow-xs">
+              <div className="w-6 h-6 rounded-full bg-[#a4d4c5] flex items-center justify-center text-ink shadow-xs flex-shrink-0">
                 <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
               </div>
-              <span className="text-[11px] font-bold text-ink">AI Analyst</span>
+              <span className="text-[11px] font-bold text-ink whitespace-nowrap">AI Analyst</span>
             </div>
-            <span className="text-[9px] font-bold text-[#ff4d8b] group-hover/analyst:translate-x-0.5 transition-transform flex items-center gap-0.5">
+            <span className="text-[9px] font-bold text-[#ff4d8b] group-hover/analyst:translate-x-0.5 transition-transform flex items-center gap-0.5 flex-shrink-0">
               Try it →
             </span>
           </div>
 
-          <p className="text-[11px] text-muted leading-relaxed">
+          <p className="text-[11px] text-muted leading-relaxed whitespace-normal m-0">
             "Enterprise plan revenue surged 38% after Q3 pricing updates. Top driver: North America region."
           </p>
         </div>

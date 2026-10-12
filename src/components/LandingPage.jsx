@@ -350,20 +350,14 @@ export default function LandingPage({ onGetStarted }) {
                 <span className="md:hidden">Generate insights and interactive dashboards in seconds—no technical skills required.</span>
                 <span className="hidden md:inline">Empower your business teams to generate insights and interactive dashboards in seconds—no technical skills required.</span>
               </p>
-              <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 sm:gap-md pt-2 w-full">
+              <div className="flex items-center justify-center md:justify-start pt-2 w-full">
                 <a
                   onClick={handleCTA}
                   href="#"
-                  className="w-full max-w-[280px] md:w-auto bg-ink text-white font-button text-xs sm:text-button px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl hover:scale-105 transition-transform flex items-center justify-center shadow-md cursor-pointer whitespace-nowrap text-center mx-auto md:mx-0"
+                  className="w-full max-w-[220px] md:w-auto bg-ink text-white font-button text-xs sm:text-button md:text-lg font-semibold px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 rounded-xl sm:rounded-2xl hover:scale-105 transition-transform flex items-center justify-center shadow-md cursor-pointer whitespace-nowrap text-center mx-auto md:mx-0"
                 >
-                  Get Started Free
+                  Demo
                 </a>
-                <button
-                  className="hidden md:inline-flex bg-white border border-ink/10 text-ink font-button text-xs sm:text-button px-4 sm:px-6 py-3.5 sm:py-4 hover:bg-white/50 items-center justify-center gap-1.5 transition-all shadow-xs rounded-xl sm:rounded-2xl cursor-pointer whitespace-nowrap"
-                >
-                  <span className="material-symbols-outlined text-base">play_circle</span>
-                  <span>Watch Demo</span>
-                </button>
               </div>
             </div>
             <HeroDashboardMockup onGetStarted={handleCTA} />

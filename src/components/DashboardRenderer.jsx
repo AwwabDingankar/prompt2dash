@@ -44,7 +44,42 @@ function renderWidget(chart) {
     );
   }
 
-  switch (chart_type) {
+  // Normalize chart_type (support case-insensitive and aliases)
+  const norm = (chart_type || '').toLowerCase().replace(/[^a-z]/g, '');
+  let resolvedType = null;
+
+  if (norm === 'barchart' || norm === 'bar' || norm === 'columnchart') {
+    resolvedType = 'BarChart';
+  } else if (norm === 'linechart' || norm === 'line' || norm === 'areachart') {
+    resolvedType = 'LineChart';
+  } else if (norm === 'piechart' || norm === 'pie' || norm === 'donut' || norm === 'donutchart') {
+    resolvedType = 'PieChart';
+  } else if (norm === 'kpicard' || norm === 'kpi') {
+    resolvedType = 'KpiCard';
+  } else if (norm === 'datatable' || norm === 'table') {
+    resolvedType = 'DataTable';
+  }
+
+  // If chart_type is unspecified or defaulted to table, but x_axis & y_axis exist with data, infer the best visual chart
+  if (!resolvedType || (resolvedType === 'DataTable' && !chart_type)) {
+    if (x_axis && y_axis && data.length > 0) {
+      const firstRowX = String(data[0][x_axis] || '');
+      const isDate =
+        /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\d{4}-\d{2}|\d{2}\/\d{2})/i.test(firstRowX) ||
+        /date|month|year|day|time|period|quarter/i.test(x_axis);
+      if (isDate) {
+        resolvedType = 'LineChart';
+      } else if (data.length <= 6) {
+        resolvedType = 'PieChart';
+      } else {
+        resolvedType = 'BarChart';
+      }
+    } else {
+      resolvedType = 'DataTable';
+    }
+  }
+
+  switch (resolvedType) {
     case 'BarChart':
       return <BarChartView title={title} data={data} xKey={x_axis} yKey={y_axis} />;
 
@@ -54,14 +89,12 @@ function renderWidget(chart) {
     case 'PieChart':
       return <PieChartView title={title} data={data} nameKey={x_axis} valueKey={y_axis} />;
 
-    case 'DataTable':
-      return <DataTable title={title} data={data} />;
-
     case 'KpiCard': {
       const raw = data && data[0] ? (data[0].value ?? Object.values(data[0])[0]) : 0;
       return <KpiCard title={title} value={raw} />;
     }
 
+    case 'DataTable':
     default:
       return <DataTable title={title} data={data} />;
   }

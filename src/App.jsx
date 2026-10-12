@@ -31,10 +31,10 @@ function Logo({ onClick }) {
 }
 
 /** Shared sticky nav bar used in app + result views */
-function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon = 'arrow_back', onOpenKeyModal, hasApiKey }) {
+function AppNav({ onLogoClick, onBackClick, backLabel = 'Back', backIcon = 'arrow_back', onOpenKeyModal, hasApiKey }) {
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255,250,240,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(10,10,10,0.06)' }}>
-      <div className="flex justify-between items-center h-16 sm:h-[68px] px-3 sm:px-7 max-w-[1280px] mx-auto w-full">
+      <div className="flex justify-between items-center h-16 sm:h-[68px] px-4 sm:px-6 md:px-8 max-w-7xl mx-auto w-full">
         <Logo onClick={onLogoClick} />
 
         <div className="flex items-center gap-1.5 sm:gap-3">
@@ -61,17 +61,16 @@ function AppNav({ onLogoClick, onBackClick, backLabel = 'Back to site', backIcon
             </span>
           </button>
 
-          {/* Premium "Back to site" button */}
+          {/* Back button */}
           <button
             onClick={onBackClick}
-            className="inline-flex items-center gap-1 sm:gap-2 bg-white text-ink text-xs sm:text-[13px] font-semibold rounded-full px-2.5 sm:px-4 py-1.5 border border-black/10 shadow-xs hover:bg-[#f7f2e8] transition-all cursor-pointer"
+            className="inline-flex items-center gap-1 sm:gap-2 bg-white text-ink text-xs sm:text-[13px] font-semibold rounded-full px-3 sm:px-4 py-1.5 border border-black/10 shadow-xs hover:bg-[#f7f2e8] transition-all cursor-pointer"
             style={{ fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}
           >
             <span className="material-symbols-outlined text-[16px] sm:text-[18px]">
               {backIcon}
             </span>
-            <span className="hidden sm:inline">{backLabel}</span>
-            <span className="sm:hidden">{backLabel === 'Back to site' ? 'Site' : 'New'}</span>
+            <span>{backLabel}</span>
           </button>
         </div>
       </div>
@@ -91,6 +90,7 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isApiKeyError, setIsApiKeyError] = useState(false);
 
   // User-provided Gemini API key (persisted in LocalStorage)
   const [apiKey, setApiKey] = useState(() => {
@@ -99,12 +99,30 @@ export default function App() {
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [keyModalError, setKeyModalError] = useState('');
 
+  const handleValidateApiKey = async (keyToValidate) => {
+    const validateUrl = API_URL.replace(/\/query\/?$/, '/validate-key');
+    const res = await fetch(validateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-gemini-api-key': keyToValidate.trim(),
+      },
+      body: JSON.stringify({ apiKey: keyToValidate.trim() }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.valid === false) {
+      throw new Error(json.error || 'Invalid Gemini API key. Please check your key from Google AI Studio.');
+    }
+    return true;
+  };
+
   const handleSaveApiKey = (newKey) => {
     const trimmed = (newKey || '').trim();
     setApiKey(trimmed);
     localStorage.setItem('p2d_gemini_api_key', trimmed);
     setShowKeyModal(false);
     setKeyModalError('');
+    setIsApiKeyError(false);
     if (view === 'landing') {
       setView('app');
     }
@@ -121,6 +139,7 @@ export default function App() {
 
     // Check if Gemini API key is configured
     if (!apiKey || !apiKey.trim()) {
+      setIsApiKeyError(true);
       setKeyModalError('Please enter your Gemini API key to run queries.');
       setShowKeyModal(true);
       return;
@@ -130,6 +149,7 @@ export default function App() {
     setView('result');
     setLoading(true);
     setError(null);
+    setIsApiKeyError(false);
     setResult(null);
 
     try {
@@ -144,15 +164,19 @@ export default function App() {
       const json = await res.json();
       if (!res.ok) {
         if (json.isApiKeyError) {
+          setIsApiKeyError(true);
           setKeyModalError(json.error || 'Your Gemini API key was rejected. Please verify it below.');
-          setShowKeyModal(true);
+        } else {
+          setIsApiKeyError(false);
         }
         setError(json.reason || json.error || 'Something went wrong');
       } else {
         setResult(json);
+        setIsApiKeyError(false);
       }
     } catch (err) {
       console.error('Fetch error:', err, 'API_URL:', API_URL);
+      setIsApiKeyError(false);
       setError('Could not reach the server. Check the browser console for details.');
     } finally {
       setLoading(false);
@@ -176,16 +200,16 @@ export default function App() {
         <AppNav
           onLogoClick={() => { setView('app'); setResult(null); setError(null); setLoading(false); }}
           onBackClick={() => { setView('app'); setResult(null); setError(null); setLoading(false); }}
-          backLabel="New query"
-          backIcon="edit_note"
+          backLabel="Back"
+          backIcon="arrow_back"
           onOpenKeyModal={handleOpenKeyModal}
           hasApiKey={Boolean(apiKey && apiKey.trim())}
         />
 
         {/* Prompt banner shown once results are ready */}
         {!loading && prompt && (
-          <div className="border-b border-black/[0.06] px-3.5 sm:px-7 py-2.5 sm:py-3.5 bg-white/70 backdrop-blur-md">
-            <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-3">
+          <div className="border-b border-black/[0.06] bg-white/70 backdrop-blur-md w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 w-full box-border">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <span className="material-symbols-outlined text-base sm:text-lg text-[#ff4d8b] flex-shrink-0">auto_awesome</span>
                 <span className="text-xs sm:text-sm font-semibold text-ink truncate">
@@ -205,16 +229,21 @@ export default function App() {
           </div>
         )}
 
-        {/* Dashboard content — Aligned with navbar logo and landing page (1280px container) */}
-        <div className="max-w-[1280px] mx-auto px-3 sm:px-7 py-5 sm:py-8 pb-16 sm:pb-20 w-full box-border">
+        {/* Dashboard content — Aligned with navbar logo and prompt bar (max-w-7xl container) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-5 sm:py-8 pb-16 sm:pb-20 w-full box-border">
           {loading && <LoadingState prompt={prompt} />}
           {error && !loading && (
             <EmptyState
               message={error}
+              isApiKeyError={isApiKeyError}
+              onUpdateApiKey={() => {
+                setShowKeyModal(true);
+              }}
               onReset={() => {
                 setView('app');
                 setResult(null);
                 setError(null);
+                setIsApiKeyError(false);
               }}
             />
           )}
@@ -228,6 +257,7 @@ export default function App() {
           isOpen={showKeyModal}
           onClose={() => setShowKeyModal(false)}
           onSave={handleSaveApiKey}
+          onValidate={handleValidateApiKey}
           currentKey={apiKey}
           errorMessage={keyModalError}
         />
@@ -323,6 +353,7 @@ export default function App() {
           isOpen={showKeyModal}
           onClose={() => setShowKeyModal(false)}
           onSave={handleSaveApiKey}
+          onValidate={handleValidateApiKey}
           currentKey={apiKey}
           errorMessage={keyModalError}
         />
@@ -343,6 +374,7 @@ export default function App() {
         isOpen={showKeyModal}
         onClose={() => setShowKeyModal(false)}
         onSave={handleSaveApiKey}
+        onValidate={handleValidateApiKey}
         currentKey={apiKey}
         errorMessage={keyModalError}
       />

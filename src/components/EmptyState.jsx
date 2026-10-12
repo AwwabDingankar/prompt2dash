@@ -1,5 +1,14 @@
 /** EmptyState — Error / No Data state matching Stitch design */
-export default function EmptyState({ message, onReset }) {
+export default function EmptyState({
+  message,
+  onReset,
+  isApiKeyError = false,
+  onUpdateApiKey,
+}) {
+  const isKeyError =
+    isApiKeyError ||
+    (Boolean(onUpdateApiKey) && /api key|gemini api|unauthorized|authenticated/i.test(message || ''));
+
   return (
     <div
       style={{
@@ -27,7 +36,7 @@ export default function EmptyState({ message, onReset }) {
         }}
       >
         <span className="material-symbols-outlined" style={{ fontSize: '28px', color: '#ff4d8b' }}>
-          help_outline
+          {isKeyError ? 'key' : 'help_outline'}
         </span>
       </div>
 
@@ -40,7 +49,7 @@ export default function EmptyState({ message, onReset }) {
           margin: '0 0 10px',
         }}
       >
-        Could not generate dashboard
+        {isKeyError ? 'Gemini API Key Required or Invalid' : 'Could not generate dashboard'}
       </h3>
 
       <p
@@ -55,7 +64,39 @@ export default function EmptyState({ message, onReset }) {
         {message || 'No data was returned for this query. Try rephrasing or asking for a specific metric.'}
       </p>
 
-      {onReset && (
+      {isKeyError && onUpdateApiKey ? (
+        <button
+          onClick={onUpdateApiKey}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: '#0a0a0a',
+            color: '#ffffff',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontWeight: 600,
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#222222';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#0a0a0a';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+            key
+          </span>
+          Update API Key
+        </button>
+      ) : onReset ? (
         <button
           onClick={onReset}
           style={{
@@ -80,7 +121,7 @@ export default function EmptyState({ message, onReset }) {
           </span>
           Try another question
         </button>
-      )}
+      ) : null}
     </div>
   );
 }
