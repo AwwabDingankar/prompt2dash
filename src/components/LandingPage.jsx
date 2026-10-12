@@ -334,23 +334,51 @@ export default function LandingPage({ onGetStarted }) {
 
       <main>
         {/* HERO */}
-        <section className="pt-4 sm:pt-xl md:pt-xxl pb-6 sm:pb-xl md:pb-section px-4 sm:px-lg max-w-container-max mx-auto overflow-hidden relative">
+        <section className="flex flex-col pt-24 pb-16 sm:pt-28 sm:pb-20 md:min-h-screen md:py-0 md:pt-xxl md:pb-section px-4 sm:px-lg max-w-container-max mx-auto overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/p6.png')" }} />
 
-          <div className="grid md:grid-cols-2 gap-5 md:gap-xxl items-center">
-            <div className="space-y-2.5 sm:space-y-lg md:space-y-xl text-center md:text-left order-1 md:order-none">
-              <h1
-                className="font-display text-[22px] xs:text-2xl sm:text-4xl md:text-5xl lg:text-display-xl text-ink w-full max-w-full md:max-w-xl mx-auto md:mx-0 leading-tight md:leading-[1] tracking-tight md:tracking-[-2.5px] font-bold break-words"
-                style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
-              >
-                <span className="md:hidden">Make Decisions Faster with AI</span>
-                <span className="hidden md:inline">Make Data-Driven Decisions Faster with AI</span>
-              </h1>
-              <p className="text-muted text-xs sm:text-sm md:text-title-md max-w-lg mx-auto md:mx-0 leading-relaxed">
-                <span className="md:hidden">Generate insights and interactive dashboards in seconds—no technical skills required.</span>
-                <span className="hidden md:inline">Empower your business teams to generate insights and interactive dashboards in seconds—no technical skills required.</span>
-              </p>
-              <div className="flex items-center justify-center md:justify-start pt-2 w-full">
+          {/* Mobile subtle dot grid pattern for visual depth */}
+          <div
+            className="md:hidden absolute inset-0 pointer-events-none opacity-40"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(10, 10, 10, 0.15) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+              maskImage: 'radial-gradient(ellipse 85% 70% at 50% 50%, #000 50%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 85% 70% at 50% 50%, #000 50%, transparent 100%)',
+            }}
+          />
+
+          {/* Mobile soft ambient radial gradient behind hero content */}
+          <div
+            className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] bg-gradient-to-tr from-[#ff4d8b]/10 via-[#b8a4ed]/15 to-[#a4d4c5]/10 rounded-full blur-3xl pointer-events-none -z-10"
+            aria-hidden="true"
+          />
+
+          <div className="flex flex-col gap-8 sm:gap-10 md:gap-xxl md:grid md:grid-cols-2 items-center w-full relative z-10">
+            <div className="contents md:block md:space-y-xl text-center md:text-left">
+              <div className="space-y-2.5 sm:space-y-lg md:space-y-xl text-center md:text-left order-1 md:order-none">
+                {/* Mobile Value-Driven Feature Pill */}
+                <div className="md:hidden inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-black/10 shadow-2xs backdrop-blur-xs mx-auto mb-1">
+                  <span className="text-xs">💬</span>
+                  <span className="text-xs sm:text-sm font-medium text-ink tracking-tight">
+                    Chat directly with your database
+                  </span>
+                </div>
+
+                <h1
+                  className="font-display text-[22px] xs:text-2xl sm:text-4xl md:text-5xl lg:text-display-xl text-ink w-full max-w-full md:max-w-xl mx-auto md:mx-0 leading-tight md:leading-[1] tracking-tight md:tracking-[-2.5px] font-bold break-words"
+                  style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
+                >
+                  <span className="md:hidden">Make Decisions Faster with AI</span>
+                  <span className="hidden md:inline">Make Data-Driven Decisions Faster with AI</span>
+                </h1>
+                <p className="text-muted text-xs sm:text-sm md:text-title-md max-w-lg mx-auto md:mx-0 leading-relaxed">
+                  <span className="md:hidden">Generate insights and interactive dashboards in seconds—no technical skills required.</span>
+                  <span className="hidden md:inline">Empower your business teams to generate insights and interactive dashboards in seconds—no technical skills required.</span>
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center md:items-start md:justify-start pt-0 w-full order-3 md:order-none">
                 <a
                   onClick={handleCTA}
                   href="#"
@@ -358,6 +386,10 @@ export default function LandingPage({ onGetStarted }) {
                 >
                   Demo
                 </a>
+                {/* Mobile Action-Oriented Microcopy */}
+                <p className="md:hidden text-xs text-muted text-center mt-2.5 font-medium tracking-tight">
+                  See it in action — no sign-up required
+                </p>
               </div>
             </div>
             <HeroDashboardMockup onGetStarted={handleCTA} />
@@ -365,7 +397,7 @@ export default function LandingPage({ onGetStarted }) {
         </section>
 
         {/* HOW IT WORKS */}
-        <section className="py-xl md:py-section bg-surface-soft px-lg" id="how-it-works">
+        <section className="pt-12 pb-xl md:py-section bg-surface-soft px-4 sm:px-lg" id="how-it-works">
           <div className="max-w-container-max mx-auto">
             <div className="text-center mb-xl md:mb-xxl">
               <h2 className="font-display-lg text-display-sm md:text-display-lg text-ink mb-md tracking-tight md:tracking-[-2px]">How it Works</h2>

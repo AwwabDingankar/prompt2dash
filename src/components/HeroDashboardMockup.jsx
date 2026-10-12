@@ -15,6 +15,12 @@ export default function HeroDashboardMockup({ onGetStarted }) {
 
   return (
     <div className="relative group order-2 md:order-none px-0 w-full max-w-full md:max-w-[620px] mx-auto">
+      {/* Subtle Mobile Decorative Gradient Backdrop */}
+      <div
+        className="md:hidden absolute -inset-3 sm:-inset-5 bg-gradient-to-tr from-[#ff4d8b]/15 via-[#b8a4ed]/20 to-[#a4d4c5]/15 rounded-[2.5rem] blur-xl opacity-90 pointer-events-none -z-10"
+        aria-hidden="true"
+      />
+
       {/* Outer Clay Card Container */}
       <div
         className="relative rounded-[1.25rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-2.5 sm:p-4 md:p-5 animate-float transition-all duration-500 w-full max-w-full box-border scale-95 xs:scale-100 md:scale-100 origin-top shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)]"

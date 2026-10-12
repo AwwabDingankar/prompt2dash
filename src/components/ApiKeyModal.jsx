@@ -288,7 +288,6 @@ export default function ApiKeyModal({
                     if (validationError) setValidationError('');
                   }}
                   placeholder="AIzaSy..."
-                  autoFocus
                   style={{
                     flex: 1,
                     padding: '12px 14px',

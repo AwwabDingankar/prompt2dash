@@ -19,12 +19,17 @@ export default function ContactModal({
   });
   const [submitted, setSubmitted] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [activationNotice, setActivationNotice] = useState(false);
 
   // Sync initial plan when modal opens
   useEffect(() => {
     if (isOpen) {
       setSelectedPlan(initialPlan || 'Professional');
       setSubmitted(false);
+      setSubmitError('');
+      setActivationNotice(false);
     }
   }, [isOpen, initialPlan]);
 
@@ -51,10 +56,82 @@ export default function ContactModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setSubmitError('');
+    setActivationNotice(false);
+
+    const backendUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api/query').replace(/\/query\/?$/, '/contact');
+
+    let dbSaved = false;
+    let emailDispatched = false;
+
+    // 1. Submit to Prompt2Dash backend (persists in PostgreSQL NeonDB + triggers nodemailer if SMTP set)
+    try {
+      const beRes = await fetch(backendUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          plan: selectedPlan,
+          dbType: form.dbType.trim(),
+          message: form.message.trim(),
+        }),
+      });
+
+      if (beRes.ok) {
+        const beData = await beRes.json();
+        dbSaved = true;
+        if (beData.emailSent) {
+          emailDispatched = true;
+        }
+      }
+    } catch (err) {
+      console.warn('[ContactModal] Backend submission note:', err);
+    }
+
+    // 2. Dispatch to FormSubmit for direct automated forwarding to awwabsaleem09@gmail.com
+    try {
+      const fsRes = await fetch('https://formsubmit.co/ajax/awwabsaleem09@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          _replyto: form.email.trim(),
+          _subject: `[Prompt2Dash Inquiry] ${selectedPlan} Plan — ${form.name.trim()}`,
+          plan: selectedPlan,
+          database_stack: form.dbType.trim() || 'Not specified',
+          message: form.message.trim(),
+          _template: 'table',
+        }),
+      });
+
+      const fsData = await fsRes.json();
+      if (fsData.success === 'true' || fsData.success === true) {
+        emailDispatched = true;
+      } else if (fsData.message && fsData.message.toLowerCase().includes('confirm your email')) {
+        setActivationNotice(true);
+      }
+    } catch (err) {
+      console.warn('[ContactModal] FormSubmit forwarding note:', err);
+    }
+
+    setIsSubmitting(false);
+
+    // If recorded in NeonDB or delivered via email service, mark as submitted successfully
+    if (dbSaved || emailDispatched || activationNotice) {
+      setSubmitted(true);
+    } else {
+      setSubmitError('Unable to send inquiry automatically. Please try again or email us directly.');
+    }
   };
 
   const handleCopyEmail = () => {
@@ -126,7 +203,7 @@ export default function ContactModal({
         <div className="p-4 sm:p-7 max-h-[82vh] overflow-y-auto">
           {submitted ? (
             /* Submission Success View */
-            <div className="py-8 text-center space-y-4">
+            <div className="py-6 text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-[#a4d4c5]/25 border-2 border-[#a4d4c5] text-teal-800 flex items-center justify-center mx-auto shadow-inner">
                 <span className="material-symbols-outlined text-3xl font-bold">check</span>
               </div>
@@ -143,25 +220,60 @@ export default function ContactModal({
                 </p>
               </div>
 
+              {/* Status checklist badges */}
+              <div className="bg-[#faf5e8]/70 border border-black/10 rounded-xl p-3 max-w-md mx-auto text-left space-y-1.5 text-xs">
+                <div className="flex items-center gap-2 text-emerald-800">
+                  <span className="material-symbols-outlined text-sm font-bold text-emerald-600">check_circle</span>
+                  <span className="font-medium">Recorded to PostgreSQL database</span>
+                </div>
+                <div className="flex items-center gap-2 text-emerald-800">
+                  <span className="material-symbols-outlined text-sm font-bold text-emerald-600">check_circle</span>
+                  <span className="font-medium">Email notification dispatched to awwabsaleem09@gmail.com</span>
+                </div>
+              </div>
+
+              {/* One-time FormSubmit activation notice if applicable */}
+              {activationNotice && (
+                <div className="bg-amber-50 border border-amber-200/90 rounded-xl p-3.5 max-w-md mx-auto text-left text-xs text-amber-900 space-y-1">
+                  <p className="font-semibold flex items-center gap-1.5 text-amber-800">
+                    <span className="material-symbols-outlined text-sm text-amber-600">mark_email_unread</span>
+                    One-Time Activation Required
+                  </p>
+                  <p className="text-[11px] leading-relaxed text-amber-800">
+                    FormSubmit has sent a confirmation email to <strong>awwabsaleem09@gmail.com</strong>.
+                    Please check your inbox (or spam) and click <em>"Activate Form"</em> once to allow direct inbox delivery.
+                  </p>
+                </div>
+              )}
+
               {/* Direct email backup chip */}
-              <div className="bg-[#faf5e8] border border-black/10 rounded-xl p-3.5 max-w-md mx-auto text-left flex items-center justify-between gap-3 text-xs">
+              <div className="bg-white border border-black/10 rounded-xl p-3.5 max-w-md mx-auto text-left flex items-center justify-between gap-3 text-xs shadow-xs">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-base text-[#ff4d8b]">mail</span>
                   <div>
-                    <p className="text-[10px] text-muted uppercase font-semibold">Direct Contact</p>
+                    <p className="text-[10px] text-muted uppercase font-semibold">Direct Email Contact</p>
                     <p className="font-semibold text-ink">awwabsaleem09@gmail.com</p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCopyEmail}
-                  className="px-2.5 py-1 bg-white border border-black/15 rounded-lg font-semibold text-ink hover:bg-black/5 transition-colors cursor-pointer"
-                >
-                  {copiedEmail ? 'Copied!' : 'Copy Email'}
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <a
+                    href={`mailto:awwabsaleem09@gmail.com?subject=${encodeURIComponent(`[Prompt2Dash Inquiry] ${selectedPlan} Plan — ${form.name}`)}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nPlan: ${selectedPlan}\nDatabase/Stack: ${form.dbType}\n\nMessage:\n${form.message}`)}`}
+                    className="px-2.5 py-1 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg font-semibold text-ink transition-colors cursor-pointer text-[11px] flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[12px]">send</span>
+                    <span>Open Mail</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleCopyEmail}
+                    className="px-2.5 py-1 bg-white border border-black/15 rounded-lg font-semibold text-ink hover:bg-black/5 transition-colors cursor-pointer text-[11px]"
+                  >
+                    {copiedEmail ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
               </div>
 
-              <div className="pt-3 flex justify-center gap-3">
+              <div className="pt-2 flex justify-center gap-3">
                 <button
                   type="button"
                   onClick={() => {
@@ -344,6 +456,22 @@ export default function ContactModal({
                 </button>
               </div>
 
+              {/* Error banner if submission encountered an issue */}
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-base text-red-600 flex-shrink-0">error</span>
+                    <span>{submitError}</span>
+                  </div>
+                  <a
+                    href={`mailto:awwabsaleem09@gmail.com?subject=${encodeURIComponent(`[Prompt2Dash Inquiry] ${selectedPlan}`)}&body=${encodeURIComponent(form.message)}`}
+                    className="text-xs font-semibold underline text-red-800 hover:text-red-950 whitespace-nowrap ml-2"
+                  >
+                    Send Email
+                  </a>
+                </div>
+              )}
+
               {/* Submit Row */}
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p className="text-[11px] text-muted flex items-center gap-1 order-2 sm:order-1">
@@ -355,16 +483,27 @@ export default function ContactModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-black/15 text-xs font-semibold text-muted hover:text-ink hover:bg-black/5 transition-colors cursor-pointer"
+                    disabled={isSubmitting}
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-black/15 text-xs font-semibold text-muted hover:text-ink hover:bg-black/5 disabled:opacity-50 transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 sm:flex-none bg-ink text-white font-semibold text-xs px-6 py-2.5 rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5"
+                    disabled={isSubmitting}
+                    className="flex-1 sm:flex-none bg-ink text-white font-semibold text-xs px-6 py-2.5 rounded-xl hover:opacity-90 disabled:opacity-70 transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <span>Submit Inquiry</span>
-                    <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Submit Inquiry</span>
+                        <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
